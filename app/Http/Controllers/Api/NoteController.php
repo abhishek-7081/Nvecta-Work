@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\PaginationRequest;
 use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
@@ -19,14 +20,16 @@ class NoteController extends Controller
     /**
      * Display a paginated listing of notes.
      *
-     * @param Request $request
+     * @param PaginationRequest $request
      * @return JsonResponse
      */
-    public function index(Request $request): JsonResponse
+    public function index(PaginationRequest $request): JsonResponse
     {
-        $limit = min(max((int) $request->query('limit', 10), 1), 100);
+        $limit = (int) ($request->query('limit') ?? $request->query('per_page', 10));
+        $sortBy = $request->query('sort_by', 'id');
+        $order = strtolower($request->query('order', 'desc'));
 
-        $notes = Note::latest('id')->paginate($limit);
+        $notes = Note::orderBy($sortBy, $order)->paginate($limit);
 
         return $this->successResponse(
             data: [
@@ -37,6 +40,7 @@ class NoteController extends Controller
                     'per_page' => $notes->perPage(),
                     'current_page' => $notes->currentPage(),
                     'total_pages' => $notes->lastPage(),
+                    'has_more_pages' => $notes->hasMorePages(),
                 ],
             ],
             message: 'Notes retrieved successfully',
