@@ -1,18 +1,19 @@
 <!DOCTYPE html>
 <html lang="en" class="h-full bg-slate-950 text-slate-100">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Notes Management System | Laravel & Semantic AI</title>
-    
+
     <!-- Google Fonts: Inter & Outfit -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
-    
+
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-    
+
     <!-- Tailwind CSS (via CDN for standalone instant UI) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -37,46 +38,58 @@
             }
         }
     </script>
-    
+
     <style>
         body {
             font-family: 'Inter', sans-serif;
             background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%),
-                        radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.1), transparent 50%),
-                        #090d16;
+                radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.1), transparent 50%),
+                #090d16;
         }
+
         .glass-panel {
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.08);
         }
+
         .glass-card {
             background: rgba(30, 41, 59, 0.6);
             backdrop-filter: blur(8px);
             border: 1px solid rgba(255, 255, 255, 0.06);
             transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
         }
+
         .glass-card:hover {
             transform: translateY(-2px);
             border-color: rgba(99, 102, 241, 0.35);
             box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.2);
         }
+
         .gradient-text {
             background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
+
         .shimmer {
-            background: linear-gradient(90deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 100%);
+            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 100%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
+
         @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
+            0% {
+                background-position: -200% 0;
+            }
+
+            100% {
+                background-position: 200% 0;
+            }
         }
     </style>
 </head>
+
 <body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
 
     <!-- Toast Notifications Container -->
@@ -127,13 +140,12 @@
             <!-- Search Bar -->
             <div class="relative flex-1 w-full">
                 <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
-                <input 
-                    type="text" 
-                    id="searchInput" 
-                    placeholder="Search notes (Keyword or Semantic AI Query)..." 
+                <input
+                    type="text"
+                    id="searchInput"
+                    placeholder="Search notes (Keyword or Semantic AI Query)..."
                     class="w-full pl-10 pr-10 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                    onkeyup="handleSearchInput(event)"
-                >
+                    onkeyup="handleSearchInput(event)">
                 <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
@@ -249,28 +261,26 @@
 
             <form id="noteForm" onsubmit="handleNoteSubmit(event)" class="flex flex-col gap-4">
                 <input type="hidden" id="formNoteId">
-                
+
                 <div class="flex flex-col gap-1.5">
                     <label for="formTitle" class="text-xs font-semibold text-slate-300">Title <span class="text-rose-400">*</span></label>
-                    <input 
-                        type="text" 
-                        id="formTitle" 
-                        placeholder="e.g., Understanding System Design and AI" 
+                    <input
+                        type="text"
+                        id="formTitle"
+                        placeholder="e.g., Understanding System Design and AI"
                         class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
-                        required
-                    >
+                        required>
                     <span id="formTitleError" class="text-[11px] text-rose-400 hidden"></span>
                 </div>
 
                 <div class="flex flex-col gap-1.5">
                     <label for="formContent" class="text-xs font-semibold text-slate-300">Content <span class="text-rose-400">*</span></label>
-                    <textarea 
-                        id="formContent" 
-                        rows="6" 
-                        placeholder="Type your note content here..." 
+                    <textarea
+                        id="formContent"
+                        rows="6"
+                        placeholder="Type your note content here..."
                         class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
-                        required
-                    ></textarea>
+                        required></textarea>
                     <span id="formContentError" class="text-[11px] text-rose-400 hidden"></span>
                 </div>
 
@@ -311,7 +321,12 @@
 
             try {
                 const url = `/api/notes?page=${currentPage}&limit=${currentLimit}&sort_by=${currentSort}&order=${currentOrder}`;
-                const res = await fetch(url, { credentials: 'same-origin', headers: { 'Accept': 'application/json' } });
+                const res = await fetch(url, {
+                    credentials: 'same-origin',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 const json = await res.json();
 
                 if (json.success) {
@@ -336,7 +351,11 @@
             }
 
             container.innerHTML = notes.map(note => {
-                const date = new Date(note.created_at).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+                const date = new Date(note.created_at).toLocaleDateString(undefined, {
+                    month: 'short',
+                    day: 'numeric',
+                    year: 'numeric'
+                });
                 const hasSummary = !!note.summary;
                 const hasVector = !!note.has_embedding;
 
@@ -489,6 +508,7 @@
 
         // Search Input Handling
         let searchTimeout;
+
         function handleSearchInput(e) {
             const val = e.target.value.trim();
             const clearBtn = document.getElementById('clearSearchBtn');
@@ -513,7 +533,9 @@
 
             try {
                 const res = await fetch(`/api/notes/search?q=${encodeURIComponent(query)}&limit=15`, {
-                    headers: { 'Accept': 'application/json' }
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
                 const json = await res.json();
 
@@ -550,7 +572,7 @@
             document.getElementById('detailTitle').innerText = note.title;
             document.getElementById('detailContent').innerText = note.content;
             document.getElementById('detailDates').innerText = `Created: ${new Date(note.created_at).toLocaleString()}`;
-            
+
             const summaryContainer = document.getElementById('detailSummaryContainer');
             const summaryPill = document.getElementById('summaryStatusPill');
 
@@ -580,6 +602,7 @@
         }
 
         let activeSummaryText = '';
+
         function copySummaryText() {
             if (!activeSummaryText) return;
             navigator.clipboard.writeText(activeSummaryText).then(() => {
@@ -601,7 +624,12 @@
 
             try {
                 const url = `/api/notes/${id}/summary${force ? '?force=true' : ''}`;
-                const res = await fetch(url, { method: 'POST', headers: { 'Accept': 'application/json' } });
+                const res = await fetch(url, {
+                    method: 'POST',
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
                 const json = await res.json();
 
                 if (json.success) {
@@ -610,11 +638,11 @@
                     summaryContainer.innerHTML = `<p class="text-slate-200">${escapeHtml(sum)}</p>`;
                     summaryPill.classList.remove('hidden');
                     summaryPill.innerText = json.data.cached ? 'From Cache' : 'Fresh AI';
-                    summaryPill.className = json.data.cached 
-                        ? 'px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300' 
-                        : 'px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+                    summaryPill.className = json.data.cached ?
+                        'px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300' :
+                        'px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
                     copyBtn.classList.remove('hidden');
-                    
+
                     // Update note in local state
                     const local = allNotes.find(n => n.id === id);
                     if (local) local.summary = sum;
@@ -689,8 +717,14 @@
             try {
                 const res = await fetch(url, {
                     method: method,
-                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-                    body: JSON.stringify({ title, content })
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        title,
+                        content
+                    })
                 });
                 const json = await res.json();
 
@@ -727,7 +761,9 @@
             try {
                 const res = await fetch(`/api/notes/${id}`, {
                     method: 'DELETE',
-                    headers: { 'Accept': 'application/json' }
+                    headers: {
+                        'Accept': 'application/json'
+                    }
                 });
                 const json = await res.json();
 
@@ -746,7 +782,7 @@
         function showToast(message, type = 'info') {
             const container = document.getElementById('toastContainer');
             const toast = document.createElement('div');
-            
+
             const isSuccess = type === 'success';
             const isError = type === 'error';
 
@@ -784,8 +820,9 @@
                 '>': '&gt;',
                 '"': '&quot;',
                 "'": '&#39;'
-            }[m]));
+            } [m]));
         }
     </script>
 </body>
+
 </html>
