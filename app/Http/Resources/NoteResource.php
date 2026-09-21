@@ -20,6 +20,8 @@ class NoteResource extends JsonResource
             'content' => $this->content,
             'summary' => $this->summary,
             'has_embedding' => !empty($this->embedding),
+            'similarity_score' => $this->whenNotNull($this->similarity_score),
+            'similarity_percentage' => $this->whenNotNull($this->similarity_percentage),
             'created_at' => $this->created_at?->toISOString(),
             'updated_at' => $this->updated_at?->toISOString(),
         ];

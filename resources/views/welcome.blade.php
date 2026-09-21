@@ -106,6 +106,11 @@
                     <span class="text-indigo-400 font-mono text-[11px]" id="providerBadge">AI: Active</span>
                 </div>
 
+                <a href="/docs/index.html" target="_blank" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 text-slate-300 hover:text-white text-xs font-semibold transition">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i>
+                    <span>API Docs</span>
+                </a>
+
                 <button onclick="openCreateModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 transition active:scale-95">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>New Note</span>
@@ -201,10 +206,16 @@
                         <span class="text-xs font-semibold text-indigo-200">AI-Generated Executive Summary</span>
                         <span id="summaryStatusPill" class="hidden px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300"></span>
                     </div>
-                    <button id="regenerateSummaryBtn" onclick="triggerSummary(currentDetailId, true)" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium transition">
-                        <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                        <span>Re-summarize</span>
-                    </button>
+                    <div class="flex items-center gap-3">
+                        <button id="copySummaryBtn" onclick="copySummaryText()" class="hidden text-xs text-slate-400 hover:text-white flex items-center gap-1 font-medium transition" title="Copy Summary">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <span>Copy</span>
+                        </button>
+                        <button id="regenerateSummaryBtn" onclick="triggerSummary(currentDetailId, true)" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium transition">
+                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <span>Re-summarize</span>
+                        </button>
+                    </div>
                 </div>
                 <div id="detailSummaryContainer" class="text-xs text-slate-300 leading-normal min-h-[38px] flex items-center">
                     <span class="text-slate-500 italic">No summary generated yet. Click Generate Summary below.</span>
@@ -333,7 +344,14 @@
                 <div class="glass-card rounded-2xl p-5 flex flex-col justify-between gap-4 group">
                     <div class="flex flex-col gap-2.5">
                         <div class="flex items-center justify-between gap-2">
-                            <span class="text-[11px] font-mono text-slate-400">#${note.id}</span>
+                            <div class="flex items-center gap-1.5">
+                                <span class="text-[11px] font-mono text-slate-400">#${note.id}</span>
+                                ${note.similarity_percentage !== undefined ? `
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/20 text-violet-300 border border-violet-500/40 animate-pulse" title="Cosine Similarity Score: ${note.similarity_score}">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-violet-400"></i> ${note.similarity_percentage}% Match
+                                    </span>
+                                ` : ''}
+                            </div>
                             <div class="flex items-center gap-1.5">
                                 ${hasVector ? `
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" title="Vector Embedding Active in MySQL">
@@ -486,19 +504,33 @@
             }, 300);
         }
 
-        // Client & Server Search
+        // Semantic Vector Search API Call
         async function executeSearch(query) {
             searchQuery = query;
             document.getElementById('searchBanner').classList.remove('hidden');
             document.getElementById('searchQueryText').innerText = query;
+            renderLoadingSkeleton();
 
-            // In Phase 7 semantic search endpoint GET /api/notes/search?q=... will be called directly.
-            // For now, search matches dynamically across current and loaded notes
-            const filtered = allNotes.filter(n => 
-                n.title.toLowerCase().includes(query.toLowerCase()) || 
-                n.content.toLowerCase().includes(query.toLowerCase())
-            );
-            renderNotesGrid(filtered);
+            try {
+                const res = await fetch(`/api/notes/search?q=${encodeURIComponent(query)}&limit=15`, {
+                    headers: { 'Accept': 'application/json' }
+                });
+                const json = await res.json();
+
+                if (json.success) {
+                    const matchedNotes = json.data.notes || [];
+                    renderNotesGrid(matchedNotes);
+
+                    const info = document.getElementById('paginationInfo');
+                    info.innerText = `Found ${json.data.total_matches} semantic match(es) for "${query}"`;
+                    document.getElementById('paginationButtons').innerHTML = '';
+                } else {
+                    renderEmptyState(json.message || 'No semantic matches found.');
+                }
+            } catch (err) {
+                console.error(err);
+                renderEmptyState('Failed to execute semantic search.');
+            }
         }
 
         function clearSearch() {
@@ -522,14 +554,20 @@
             const summaryContainer = document.getElementById('detailSummaryContainer');
             const summaryPill = document.getElementById('summaryStatusPill');
 
+            const copyBtn = document.getElementById('copySummaryBtn');
+
             if (note.summary) {
+                activeSummaryText = note.summary;
                 summaryContainer.innerHTML = `<p class="text-slate-200">${escapeHtml(note.summary)}</p>`;
                 summaryPill.classList.remove('hidden');
                 summaryPill.innerText = 'Cached';
                 summaryPill.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                copyBtn.classList.remove('hidden');
             } else {
+                activeSummaryText = '';
                 summaryContainer.innerHTML = `<button onclick="triggerSummary(${id})" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium flex items-center gap-1.5 transition"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate AI Summary</button>`;
                 summaryPill.classList.add('hidden');
+                copyBtn.classList.add('hidden');
                 lucide.createIcons();
             }
 
@@ -541,12 +579,24 @@
             document.getElementById('detailModal').classList.add('hidden');
         }
 
+        let activeSummaryText = '';
+        function copySummaryText() {
+            if (!activeSummaryText) return;
+            navigator.clipboard.writeText(activeSummaryText).then(() => {
+                showToast('AI Summary copied to clipboard!', 'success');
+            }).catch(() => {
+                showToast('Failed to copy to clipboard', 'error');
+            });
+        }
+
         // Trigger AI Summary API
         async function triggerSummary(id, force = false) {
             const summaryContainer = document.getElementById('detailSummaryContainer');
             const summaryPill = document.getElementById('summaryStatusPill');
+            const copyBtn = document.getElementById('copySummaryBtn');
 
             summaryContainer.innerHTML = `<span class="flex items-center gap-2 text-indigo-300"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> AI is summarizing note #${id}...</span>`;
+            copyBtn.classList.add('hidden');
             lucide.createIcons();
 
             try {
@@ -556,12 +606,14 @@
 
                 if (json.success) {
                     const sum = json.data.summary;
+                    activeSummaryText = sum;
                     summaryContainer.innerHTML = `<p class="text-slate-200">${escapeHtml(sum)}</p>`;
                     summaryPill.classList.remove('hidden');
                     summaryPill.innerText = json.data.cached ? 'From Cache' : 'Fresh AI';
                     summaryPill.className = json.data.cached 
                         ? 'px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300' 
                         : 'px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+                    copyBtn.classList.remove('hidden');
                     
                     // Update note in local state
                     const local = allNotes.find(n => n.id === id);

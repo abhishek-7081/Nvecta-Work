@@ -1,0 +1,342 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "AI Notes Management System API",
+    "description": "Production-grade REST API with AI Summarization and Vector Semantic Search built with Laravel 12 & MySQL.",
+    "version": "1.0.0",
+    "contact": {
+      "name": "API Engineering Team"
+    }
+  },
+  "servers": [
+    {
+      "url": "http://127.0.0.1:8000/api",
+      "description": "Local Development Server"
+    }
+  ],
+  "tags": [
+    { "name": "Notes CRUD", "description": "Core Note management endpoints" },
+    { "name": "AI & Semantic Search", "description": "AI-powered summarization and vector semantic search" }
+  ],
+  "paths": {
+    "/notes": {
+      "get": {
+        "tags": ["Notes CRUD"],
+        "summary": "List Notes (Paginated)",
+        "description": "Retrieve a paginated list of notes with customizable sorting and limit bounds (max 100).",
+        "parameters": [
+          { "name": "page", "in": "query", "description": "Page number (min: 1)", "schema": { "type": "integer", "default": 1 } },
+          { "name": "limit", "in": "query", "description": "Items per page (min: 1, max: 100)", "schema": { "type": "integer", "default": 10 } },
+          { "name": "sort_by", "in": "query", "description": "Field to sort by", "schema": { "type": "string", "enum": ["id", "title", "created_at", "updated_at"], "default": "id" } },
+          { "name": "order", "in": "query", "description": "Sort order direction", "schema": { "type": "string", "enum": ["asc", "desc"], "default": "desc" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Notes retrieved successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Notes retrieved successfully",
+                  "data": {
+                    "notes": [
+                      {
+                        "id": 1,
+                        "title": "Laravel AI Architecture",
+                        "content": "Deep dive into vector embeddings and cosine similarity.",
+                        "summary": "This note explains vector embeddings in Laravel.",
+                        "has_embedding": true,
+                        "created_at": "2026-09-21T08:30:00.000000Z",
+                        "updated_at": "2026-09-21T08:30:00.000000Z"
+                      }
+                    ],
+                    "pagination": {
+                      "total": 1,
+                      "count": 1,
+                      "per_page": 10,
+                      "current_page": 1,
+                      "total_pages": 1,
+                      "has_more_pages": false
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      },
+      "post": {
+        "tags": ["Notes CRUD"],
+        "summary": "Create Note",
+        "description": "Create a new note. Automatically generates vector embedding asynchronously for semantic search.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/StoreNoteRequest" },
+              "example": {
+                "title": "Interview Preparation: Advanced Laravel and AI",
+                "content": "Deep dive into Service Container, Eloquent ORM optimization, and vector embeddings for semantic search."
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Note created successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Note created successfully",
+                  "data": {
+                    "id": 1,
+                    "title": "Interview Preparation: Advanced Laravel and AI",
+                    "content": "Deep dive into Service Container...",
+                    "summary": null,
+                    "has_embedding": true,
+                    "created_at": "2026-09-21T08:30:00.000000Z",
+                    "updated_at": "2026-09-21T08:30:00.000000Z"
+                  }
+                }
+              }
+            }
+          },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/notes/{id}": {
+      "get": {
+        "tags": ["Notes CRUD"],
+        "summary": "Get Single Note",
+        "description": "Retrieve complete details of a single note by its ID.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "description": "Note ID", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note retrieved successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Note retrieved successfully",
+                  "data": {
+                    "id": 1,
+                    "title": "Interview Preparation: Advanced Laravel and AI",
+                    "content": "Deep dive into Service Container...",
+                    "summary": null,
+                    "has_embedding": true,
+                    "created_at": "2026-09-21T08:30:00.000000Z",
+                    "updated_at": "2026-09-21T08:30:00.000000Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      },
+      "put": {
+        "tags": ["Notes CRUD"],
+        "summary": "Update Note",
+        "description": "Update an existing note's title and/or content. Automatically resets summary and refreshes vector embedding.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "description": "Note ID", "schema": { "type": "integer" } }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/UpdateNoteRequest" },
+              "example": {
+                "title": "Updated Title",
+                "content": "Updated content with additional insights."
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Note updated successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Note updated successfully",
+                  "data": {
+                    "id": 1,
+                    "title": "Updated Title",
+                    "content": "Updated content...",
+                    "summary": null,
+                    "has_embedding": true,
+                    "created_at": "2026-09-21T08:30:00.000000Z",
+                    "updated_at": "2026-09-21T08:35:00.000000Z"
+                  }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      },
+      "delete": {
+        "tags": ["Notes CRUD"],
+        "summary": "Delete Note",
+        "description": "Soft-delete a note by ID.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "description": "Note ID", "schema": { "type": "integer" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Note deleted successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Note deleted successfully",
+                  "data": null
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" }
+        }
+      }
+    },
+    "/notes/search": {
+      "get": {
+        "tags": ["AI & Semantic Search"],
+        "summary": "AI Semantic Vector Search",
+        "description": "Perform conceptual vector search across notes using Cosine Similarity.",
+        "parameters": [
+          { "name": "q", "in": "query", "required": true, "description": "Search query or natural language question", "schema": { "type": "string" }, "example": "coding interview prep" },
+          { "name": "limit", "in": "query", "description": "Maximum results to return (max 50)", "schema": { "type": "integer", "default": 10 } }
+        ],
+        "responses": {
+          "200": {
+            "description": "Semantic search completed successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "Semantic search completed successfully",
+                  "data": {
+                    "query": "coding interview prep",
+                    "total_matches": 1,
+                    "notes": [
+                      {
+                        "id": 19,
+                        "title": "How to prepare for a software engineering interview",
+                        "content": "Focus on data structures and system design.",
+                        "summary": null,
+                        "has_embedding": true,
+                        "similarity_score": 0.5472,
+                        "similarity_percentage": 54.7,
+                        "created_at": "2026-09-21T08:30:00.000000Z",
+                        "updated_at": "2026-09-21T08:30:00.000000Z"
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          },
+          "422": { "$ref": "#/components/responses/ValidationError" }
+        }
+      }
+    },
+    "/notes/{id}/summary": {
+      "post": {
+        "tags": ["AI & Semantic Search"],
+        "summary": "Generate / Retrieve AI Summary",
+        "description": "Generates a concise 2-3 sentence AI summary of the note content. Caches results in MySQL for sub-10ms subsequent lookups.",
+        "parameters": [
+          { "name": "id", "in": "path", "required": true, "description": "Note ID", "schema": { "type": "integer" } },
+          { "name": "force", "in": "query", "description": "Force regenerate summary bypassing cache", "schema": { "type": "boolean", "default": false } }
+        ],
+        "responses": {
+          "200": {
+            "description": "AI summary generated or retrieved successfully",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": true,
+                  "message": "AI summary generated successfully",
+                  "data": {
+                    "note_id": 1,
+                    "title": "Laravel AI Architecture",
+                    "summary": "This note provides an in-depth breakdown of vector embeddings and semantic search mechanics in modern PHP/Laravel backends.",
+                    "cached": false
+                  }
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFound" },
+          "503": {
+            "description": "AI Service Unavailable",
+            "content": {
+              "application/json": {
+                "example": {
+                  "success": false,
+                  "message": "Failed to generate AI summary at this time. Please try again later."
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "StoreNoteRequest": {
+        "type": "object",
+        "required": ["title", "content"],
+        "properties": {
+          "title": { "type": "string", "maxLength": 255, "example": "System Design Notes" },
+          "content": { "type": "string", "example": "Core trade-offs between SQL and NoSQL data stores." }
+        }
+      },
+      "UpdateNoteRequest": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string", "maxLength": 255, "example": "Updated System Design Notes" },
+          "content": { "type": "string", "example": "Updated content..." }
+        }
+      }
+    },
+    "responses": {
+      "NotFound": {
+        "description": "Resource Not Found",
+        "content": {
+          "application/json": {
+            "example": {
+              "success": false,
+              "message": "Note not found"
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Validation Failed",
+        "content": {
+          "application/json": {
+            "example": {
+              "success": false,
+              "message": "Validation failed",
+              "errors": {
+                "title": ["The note title is required."],
+                "content": ["The note content is required."]
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

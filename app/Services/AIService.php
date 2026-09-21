@@ -13,16 +13,33 @@ class AIService implements AIServiceInterface
 {
     protected AIServiceInterface $driver;
 
-    public function __construct()
+    public function __construct(?AIServiceInterface $driver = null)
     {
-        $provider = strtolower(config('services.ai.provider', 'openai'));
+        if ($driver !== null) {
+            $this->driver = $driver;
+            return;
+        }
 
-        if ($provider === 'openai' && !empty(config('services.openai.api_key'))) {
+        $provider = 'openai';
+        $openaiKey = null;
+        $geminiKey = null;
+
+        try {
+            if (function_exists('config')) {
+                $provider = strtolower(config('services.ai.provider', 'openai'));
+                $openaiKey = config('services.openai.api_key');
+                $geminiKey = config('services.gemini.api_key');
+            }
+        } catch (Throwable) {
+            // Environment outside of Laravel Application container (e.g. Unit tests)
+        }
+
+        if ($provider === 'openai' && !empty($openaiKey)) {
             $this->driver = new OpenAIService();
-        } elseif ($provider === 'gemini' && !empty(config('services.gemini.api_key'))) {
+        } elseif ($provider === 'gemini' && !empty($geminiKey)) {
             $this->driver = new GeminiService();
         } else {
-            // Graceful fallback to LocalAIService if API key is not configured
+            // Graceful fallback to LocalAIService
             $this->driver = new LocalAIService();
         }
     }

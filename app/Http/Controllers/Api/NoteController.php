@@ -4,12 +4,14 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\PaginationRequest;
+use App\Http\Requests\SearchNotesRequest;
 use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
 use App\Services\AIService;
 use App\Services\EmbeddingService;
+use App\Services\NoteSearchService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -22,7 +24,8 @@ class NoteController extends Controller
 
     public function __construct(
         protected EmbeddingService $embeddingService,
-        protected AIService $aiService
+        protected AIService $aiService,
+        protected NoteSearchService $searchService
     ) {}
 
     /**
@@ -227,5 +230,29 @@ class NoteController extends Controller
                 statusCode: Response::HTTP_SERVICE_UNAVAILABLE
             );
         }
+    }
+
+    /**
+     * Perform AI-powered semantic vector search across notes.
+     *
+     * @param SearchNotesRequest $request
+     * @return JsonResponse
+     */
+    public function search(SearchNotesRequest $request): JsonResponse
+    {
+        $query = $request->query('q');
+        $limit = (int) $request->query('limit', 10);
+
+        $results = $this->searchService->search($query, $limit);
+
+        return $this->successResponse(
+            data: [
+                'query' => $query,
+                'total_matches' => $results->count(),
+                'notes' => NoteResource::collection($results),
+            ],
+            message: 'Semantic search completed successfully',
+            statusCode: Response::HTTP_OK
+        );
     }
 }

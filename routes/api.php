@@ -13,6 +13,9 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::middleware(['throttle:60,1'])->group(function () {
+    // Semantic Search Endpoint
+    Route::get('/notes/search', [NoteController::class, 'search']);
+
     // CRUD Endpoints
     Route::get('/notes', [NoteController::class, 'index']);
     Route::post('/notes', [NoteController::class, 'store']);
