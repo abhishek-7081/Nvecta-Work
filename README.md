@@ -397,16 +397,16 @@ Status:   100% PASSING
 
 | Phase | AI Tool | Prompt / Objective | AI Generated Code | Manual Review & Refinement | Validation Method |
 | :--- | :--- | :--- | :--- | :--- | :--- |
-| **Phase 1** | Antigravity AI | Project setup, PHP 8.5 verification, MySQL connection | Baseline config, `.env` templates | Added AI provider placeholders early | Verified via `php artisan db:show` |
+| **Phase 1** | -- | Project setup, PHP 8.5 verification, MySQL connection | Baseline config, `.env` templates | Added AI provider placeholders early | Verified via `php artisan db:show` |
 | **Phase 2** | Antigravity AI | Design `notes` table schema & Eloquent model | Migration & `Note.php` model | Added `JSON` cast for embeddings, nullable `summary`, and query indexes | Verified via `php artisan db:table notes` |
 | **Phase 3** | Antigravity AI | Implement RESTful CRUD API with validation & ApiResponse | `NoteController`, `StoreNoteRequest`, `ApiResponse` trait | Added automatic summary/embedding cache invalidation on update | Automated cURL verification script across all 7 CRUD actions |
-| **Phase 4** | Antigravity AI | Add pagination, limit bounds, and sorting validation | `PaginationRequest.php` & Controller update | Enforced `max: 100` limit to protect server memory | Tested edge cases (`limit=500`, `sort_by=invalid`) returning 422 |
+| **Phase 4** | -- | Add pagination, limit bounds, and sorting validation | `PaginationRequest.php` & Controller update | Enforced `max: 100` limit to protect server memory | Tested edge cases (`limit=500`, `sort_by=invalid`) returning 422 |
 | **Phase 5** | Antigravity AI | Design multi-provider AI service architecture | `AIServiceInterface`, `OpenAIService`, `GeminiService`, `LocalAIService` | Engineered L2-normalized deterministic hash fallback for zero-cost offline runs | Verified vector generation and automatic model synchronization |
-| **Phase 6** | Antigravity AI | Implement AI summary endpoint with smart caching | `summary` controller method & routes | Implemented `?force=true` query parameter for manual re-summarization | Tested 1st call generation + 2nd call cache verification |
+| **Phase 6** | Gemini | Implement AI summary endpoint with smart caching | `summary` controller method & routes | Implemented `?force=true` query parameter for manual re-summarization | Tested 1st call generation + 2nd call cache verification |
 | **Phase 7** | Antigravity AI | Implement vector semantic search using Cosine Similarity | `NoteSearchService.php`, `SearchNotesRequest.php` | Optimized cosine dot product for unit vectors; added keyword fallback | Verified semantic query "coding interview" ranked Note #19 ("software engineering interview") #1 |
-| **Phase 8** | Antigravity AI | Build responsive single-page frontend UI | `resources/views/welcome.blade.php` | Added match percentage badges, Lucide icons, shimmer loaders, and copy-to-clipboard | Verified live in browser with real-time UI interaction |
-| **Phase 9** | Antigravity AI | Security audit and exception hardening | Global exception renderers in `bootstrap/app.php` | Intercepted 404, 405, 429, and 500 errors to prevent stack trace leaks | Tested SQLi payloads and method rejections |
-| **Phase 10** | Antigravity AI | Build automated Feature & Unit test suites | `NoteApiTest.php` and `NoteSearchServiceTest.php` | Added dependency injection fallback for isolated unit test execution | Executed `php artisan test` with 100% pass rate (18 tests, 53 assertions) |
+| **Phase 8** | ChatGPT | Build responsive single-page frontend UI | `resources/views/welcome.blade.php` | Added match percentage badges, Lucide icons, shimmer loaders, and copy-to-clipboard | Verified live in browser with real-time UI interaction |
+| **Phase 9** | -- | Security audit and exception hardening | Global exception renderers in `bootstrap/app.php` | Intercepted 404, 405, 429, and 500 errors to prevent stack trace leaks | Tested SQLi payloads and method rejections |
+| **Phase 10** | Antigravity AI/Gemini | Build automated Feature & Unit test suites | `NoteApiTest.php` and `NoteSearchServiceTest.php` | Added dependency injection fallback for isolated unit test execution | Executed `php artisan test` with 100% pass rate (18 tests, 53 assertions) |
 | **Phase 11** | Antigravity AI | Create OpenAPI 3.0 spec & Swagger UI | `openapi.json`, `index.html` | Embedded dark-mode Swagger UI with live "Try it out" buttons | Verified interactive Swagger portal on `/docs/index.html` |
 
 ---
