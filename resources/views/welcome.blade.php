@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" class="h-full bg-slate-950 text-slate-100">
+<html lang="en" class="h-full bg-slate-50 text-slate-900">
 
 <head>
     <meta charset="UTF-8">
@@ -14,7 +14,7 @@
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 
-    <!-- Tailwind CSS (via CDN for standalone instant UI) -->
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -27,11 +27,11 @@
                     },
                     colors: {
                         brand: {
-                            50: '#eef2ff',
-                            100: '#e0e7ff',
-                            500: '#6366f1',
-                            600: '#4f46e5',
-                            700: '#4338ca',
+                            50: '#eff6ff',
+                            100: '#dbeafe',
+                            500: '#3b82f6',
+                            600: '#2563eb',
+                            700: '#1d4ed8',
                         }
                     }
                 }
@@ -42,38 +42,39 @@
     <style>
         body {
             font-family: 'Inter', sans-serif;
-            background: radial-gradient(circle at 50% 0%, rgba(99, 102, 241, 0.15), transparent 50%),
-                radial-gradient(circle at 100% 100%, rgba(139, 92, 246, 0.1), transparent 50%),
-                #090d16;
+            background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.08), transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.05), transparent 50%),
+                #f8fafc;
         }
 
         .glass-panel {
-            background: rgba(15, 23, 42, 0.75);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(226, 232, 240, 0.9);
+            box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.04);
         }
 
         .glass-card {
-            background: rgba(30, 41, 59, 0.6);
-            backdrop-filter: blur(8px);
-            border: 1px solid rgba(255, 255, 255, 0.06);
-            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.03);
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         .glass-card:hover {
             transform: translateY(-2px);
-            border-color: rgba(99, 102, 241, 0.35);
-            box-shadow: 0 12px 30px -10px rgba(99, 102, 241, 0.2);
+            border-color: #93c5fd;
+            box-shadow: 0 12px 28px -6px rgba(59, 130, 246, 0.12);
         }
 
         .gradient-text {
-            background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+            background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
 
         .shimmer {
-            background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.03) 100%);
+            background: linear-gradient(90deg, rgba(226, 232, 240, 0.4) 0%, rgba(203, 213, 225, 0.7) 50%, rgba(226, 232, 240, 0.4) 100%);
             background-size: 200% 100%;
             animation: shimmer 1.5s infinite;
         }
@@ -88,60 +89,63 @@
             }
         }
 
-        /* Custom sleek scrollbar for modal & summary containers */
+        /* Custom sleek light scrollbar for modal & summary containers */
         ::-webkit-scrollbar {
             width: 6px;
             height: 6px;
         }
+
         ::-webkit-scrollbar-track {
-            background: rgba(15, 23, 42, 0.6);
+            background: #f1f5f9;
             border-radius: 8px;
         }
+
         ::-webkit-scrollbar-thumb {
-            background: rgba(99, 102, 241, 0.35);
+            background: #cbd5e1;
             border-radius: 8px;
         }
+
         ::-webkit-scrollbar-thumb:hover {
-            background: rgba(99, 102, 241, 0.65);
+            background: #94a3b8;
         }
     </style>
 </head>
 
-<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+<body class="min-h-screen flex flex-col antialiased text-slate-800 selection:bg-blue-500 selection:text-white">
 
     <!-- Toast Notifications Container -->
     <div id="toastContainer" class="fixed bottom-5 right-5 z-50 flex flex-col gap-2 max-w-md w-full pointer-events-none"></div>
 
     <!-- Navigation Header -->
-    <header class="sticky top-0 z-40 glass-panel border-b border-slate-800/80">
+    <header class="sticky top-0 z-40 bg-white/90 backdrop-blur-md border-b border-slate-200/80 shadow-xs">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
             <div class="flex items-center gap-3">
-                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-violet-500 flex items-center justify-center shadow-lg shadow-indigo-500/25">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-blue-600 to-indigo-600 flex items-center justify-center shadow-md shadow-blue-500/20">
                     <i data-lucide="sparkles" class="w-5 h-5 text-white"></i>
                 </div>
                 <div>
                     <h1 class="font-heading font-bold text-lg tracking-tight flex items-center gap-2">
                         <span class="gradient-text">Nvecta AI</span> Notes
                     </h1>
-                    <p class="text-[11px] text-slate-400">Laravel 12 REST API & Vector Embeddings</p>
+                    <p class="text-[11px] text-slate-500 font-medium">Laravel 12 REST API & Semantic Vector Intelligence</p>
                 </div>
             </div>
 
             <!-- Header Badges & Actions -->
             <div class="flex items-center gap-3">
-                <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-900/80 border border-slate-700/60 text-xs">
-                    <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
-                    <span class="text-slate-300 font-medium">Backend Live</span>
-                    <span class="text-slate-500">|</span>
-                    <span class="text-indigo-400 font-mono text-[11px]" id="providerBadge">AI: Active</span>
+                <div class="hidden sm:flex items-center gap-2 px-3 py-1 rounded-full bg-slate-100 border border-slate-200 text-xs">
+                    <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                    <span class="text-slate-600 font-medium">Backend Live</span>
+                    <span class="text-slate-300">|</span>
+                    <span class="text-blue-600 font-medium text-[11px]" id="providerBadge">AI: Active</span>
                 </div>
 
-                <a href="/docs/index.html" target="_blank" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-slate-800/80 hover:bg-slate-700 border border-slate-700/80 text-slate-300 hover:text-white text-xs font-semibold transition">
-                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-indigo-400"></i>
+                <a href="/docs/index.html" target="_blank" class="flex items-center gap-1.5 px-3.5 py-2 rounded-xl bg-white hover:bg-slate-50 border border-slate-200 text-slate-700 hover:text-slate-900 text-xs font-semibold shadow-xs transition">
+                    <i data-lucide="book-open" class="w-3.5 h-3.5 text-blue-600"></i>
                     <span>API Docs</span>
                 </a>
 
-                <button onclick="openCreateModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-sm font-semibold shadow-lg shadow-indigo-600/30 transition active:scale-95">
+                <button onclick="openCreateModal()" class="flex items-center gap-2 px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-sm font-semibold shadow-md shadow-blue-600/25 transition active:scale-95">
                     <i data-lucide="plus" class="w-4 h-4"></i>
                     <span>New Note</span>
                 </button>
@@ -153,7 +157,7 @@
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 flex flex-col gap-6">
 
         <!-- Search & Filter Controls -->
-        <section class="glass-panel p-4 rounded-2xl flex flex-col md:flex-row items-center gap-3 shadow-xl">
+        <section class="glass-panel p-4 rounded-2xl flex flex-col md:flex-row items-center gap-3 shadow-xs">
             <!-- Search Bar -->
             <div class="relative flex-1 w-full">
                 <i data-lucide="search" class="w-5 h-5 absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400"></i>
@@ -161,22 +165,22 @@
                     type="text"
                     id="searchInput"
                     placeholder="Search notes (Keyword or Semantic AI Query)..."
-                    class="w-full pl-10 pr-10 py-2.5 bg-slate-900/90 border border-slate-700/80 rounded-xl text-sm text-slate-100 placeholder-slate-400 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                    class="w-full pl-10 pr-10 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition shadow-xs"
                     onkeyup="handleSearchInput(event)">
-                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-white p-1">
+                <button id="clearSearchBtn" onclick="clearSearch()" class="hidden absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 p-1">
                     <i data-lucide="x" class="w-4 h-4"></i>
                 </button>
             </div>
 
             <!-- Sorting & Limits -->
             <div class="flex items-center gap-2 w-full md:w-auto">
-                <select id="sortSelect" onchange="applyFilters()" class="bg-slate-900/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                <select id="sortSelect" onchange="applyFilters()" class="bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-xs">
                     <option value="id_desc">Newest First</option>
                     <option value="id_asc">Oldest First</option>
                     <option value="title_asc">Title A-Z</option>
                 </select>
 
-                <select id="limitSelect" onchange="applyFilters()" class="bg-slate-900/90 border border-slate-700/80 rounded-xl px-3 py-2.5 text-xs text-slate-200 focus:outline-none focus:border-indigo-500">
+                <select id="limitSelect" onchange="applyFilters()" class="bg-white border border-slate-300 rounded-xl px-3 py-2.5 text-xs font-medium text-slate-700 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 shadow-xs">
                     <option value="6">6 per page</option>
                     <option value="9" selected>9 per page</option>
                     <option value="15">15 per page</option>
@@ -185,12 +189,12 @@
         </section>
 
         <!-- Search Mode Banner (When Search is active) -->
-        <div id="searchBanner" class="hidden flex items-center justify-between px-4 py-2 rounded-xl bg-indigo-950/50 border border-indigo-500/30 text-xs text-indigo-200">
+        <div id="searchBanner" class="hidden flex items-center justify-between px-4 py-2.5 rounded-xl bg-blue-50 border border-blue-200 text-xs text-blue-900">
             <span class="flex items-center gap-2">
-                <i data-lucide="sparkles" class="w-4 h-4 text-indigo-400"></i>
-                <span>Showing results for query: <strong id="searchQueryText" class="text-white"></strong></span>
+                <i data-lucide="sparkles" class="w-4 h-4 text-blue-600"></i>
+                <span>Showing semantic matches for: <strong id="searchQueryText" class="text-blue-950 font-bold"></strong></span>
             </span>
-            <button onclick="clearSearch()" class="text-indigo-300 hover:text-white underline font-medium">Clear search</button>
+            <button onclick="clearSearch()" class="text-blue-600 hover:text-blue-800 underline font-medium">Clear search</button>
         </div>
 
         <!-- Notes Grid / Loading Shimmer / Empty State -->
@@ -199,25 +203,25 @@
         </div>
 
         <!-- Pagination Controls -->
-        <div id="paginationContainer" class="flex flex-col sm:flex-row items-center justify-between gap-4 glass-panel p-4 rounded-2xl text-xs text-slate-400">
-            <div id="paginationInfo">Showing 0 of 0 notes</div>
+        <div id="paginationContainer" class="flex flex-col sm:flex-row items-center justify-between gap-4 bg-white border border-slate-200 p-4 rounded-2xl text-xs text-slate-600 shadow-xs">
+            <div id="paginationInfo" class="font-medium">Showing 0 of 0 notes</div>
             <div id="paginationButtons" class="flex items-center gap-1.5"></div>
         </div>
 
     </main>
 
     <!-- Note Detail & AI Summary Modal -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-        <div class="glass-panel bg-slate-900/95 max-w-2xl w-full max-h-[90vh] rounded-2xl p-6 border border-slate-700 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white max-w-2xl w-full max-h-[90vh] rounded-2xl p-6 border border-slate-200 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
             <!-- Modal Header (Fixed) -->
-            <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-3.5 shrink-0">
+            <div class="flex items-start justify-between gap-4 border-b border-slate-100 pb-3.5 shrink-0">
                 <div>
-                    <span id="detailBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-1.5">
+                    <span id="detailBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-700 border border-blue-200 mb-1.5">
                         <i data-lucide="cpu" class="w-3 h-3"></i> Note Details
                     </span>
-                    <h2 id="detailTitle" class="font-heading font-bold text-xl text-white break-words"></h2>
+                    <h2 id="detailTitle" class="font-heading font-bold text-xl text-slate-900 break-words"></h2>
                 </div>
-                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -226,44 +230,44 @@
             <div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-4 custom-scrollbar">
                 <!-- Full Note Content -->
                 <div class="flex flex-col gap-1.5">
-                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Note Content</span>
-                    <p id="detailContent" class="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 max-h-48 overflow-y-auto break-words select-text"></p>
+                    <span class="text-[11px] font-semibold text-slate-500 uppercase tracking-wider">Note Content</span>
+                    <p id="detailContent" class="text-sm text-slate-800 leading-relaxed whitespace-pre-wrap bg-slate-50 p-4 rounded-xl border border-slate-200 max-h-48 overflow-y-auto break-words select-text"></p>
                 </div>
 
                 <!-- AI Summary Section -->
-                <div class="flex flex-col gap-2.5 bg-gradient-to-br from-indigo-950/40 to-slate-950/70 p-4 rounded-xl border border-indigo-500/20">
-                    <div class="flex items-center justify-between gap-2 pb-2 border-b border-indigo-500/10">
+                <div class="flex flex-col gap-2.5 bg-gradient-to-br from-blue-50/70 to-indigo-50/50 p-4 rounded-xl border border-blue-100 shadow-xs">
+                    <div class="flex items-center justify-between gap-2 pb-2 border-b border-blue-100">
                         <div class="flex items-center gap-2 flex-wrap">
-                            <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>
-                            <span class="text-xs font-semibold text-indigo-200">AI Executive Summary</span>
-                            <span id="summaryStatusPill" class="hidden px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300"></span>
+                            <i data-lucide="bot" class="w-4 h-4 text-blue-600"></i>
+                            <span class="text-xs font-semibold text-blue-900">AI Executive Summary</span>
+                            <span id="summaryStatusPill" class="hidden px-2 py-0.5 rounded text-[10px] font-semibold bg-white text-slate-600 border border-slate-200 shadow-xs"></span>
                         </div>
                         <div class="flex items-center gap-2.5 shrink-0">
-                            <button id="copySummaryBtn" onclick="copySummaryText()" class="hidden text-xs text-slate-300 hover:text-white px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 flex items-center gap-1 font-medium transition" title="Copy Summary">
-                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                            <button id="copySummaryBtn" onclick="copySummaryText()" class="hidden text-xs text-slate-700 hover:text-slate-900 px-2.5 py-1 rounded-lg bg-white hover:bg-slate-100 border border-slate-200 flex items-center gap-1 font-medium shadow-xs transition" title="Copy Summary">
+                                <i data-lucide="copy" class="w-3.5 h-3.5 text-slate-500"></i>
                                 <span>Copy</span>
                             </button>
-                            <button id="regenerateSummaryBtn" onclick="triggerSummary(currentDetailId, true)" class="text-xs text-indigo-300 hover:text-white px-2 py-1 rounded bg-indigo-900/40 hover:bg-indigo-900/70 border border-indigo-500/30 flex items-center gap-1 font-medium transition">
-                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                            <button id="regenerateSummaryBtn" onclick="triggerSummary(currentDetailId, true)" class="text-xs text-blue-700 hover:text-blue-800 px-2.5 py-1 rounded-lg bg-white hover:bg-blue-50 border border-blue-200 flex items-center gap-1 font-medium shadow-xs transition">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5 text-blue-600"></i>
                                 <span>Re-summarize</span>
                             </button>
                         </div>
                     </div>
                     <!-- Dedicated scrollable container for long AI summaries -->
-                    <div id="detailSummaryContainer" class="text-xs text-slate-200 leading-relaxed min-h-[44px] max-h-56 overflow-y-auto pr-1 whitespace-pre-wrap select-text">
-                        <span class="text-slate-500 italic">No summary generated yet. Click Generate Summary below.</span>
+                    <div id="detailSummaryContainer" class="text-xs text-slate-800 leading-relaxed min-h-[44px] max-h-56 overflow-y-auto pr-1 whitespace-pre-wrap select-text">
+                        <span class="text-slate-400 italic">No summary generated yet. Click Generate Summary below.</span>
                     </div>
                 </div>
             </div>
 
             <!-- Footer Action Buttons (Fixed) -->
-            <div class="flex items-center justify-between pt-3 border-t border-slate-800 text-xs shrink-0">
-                <span id="detailDates" class="text-slate-500"></span>
+            <div class="flex items-center justify-between pt-3 border-t border-slate-100 text-xs shrink-0">
+                <span id="detailDates" class="text-slate-400"></span>
                 <div class="flex items-center gap-2">
-                    <button onclick="editFromDetail()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium flex items-center gap-1.5 transition">
+                    <button onclick="editFromDetail()" class="px-3.5 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium flex items-center gap-1.5 transition">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
                     </button>
-                    <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition">
+                    <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white font-semibold shadow-md shadow-blue-600/20 transition">
                         Done
                     </button>
                 </div>
@@ -272,11 +276,11 @@
     </div>
 
     <!-- Create / Edit Note Modal -->
-    <div id="noteModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass-panel bg-slate-900/95 max-w-lg w-full rounded-2xl p-6 border border-slate-700 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
-            <div class="flex items-center justify-between border-b border-slate-800 pb-3">
-                <h3 id="modalTitle" class="font-heading font-bold text-lg text-white">Create New Note</h3>
-                <button onclick="closeNoteModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+    <div id="noteModal" class="fixed inset-0 z-50 hidden bg-slate-900/40 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-white max-w-lg w-full rounded-2xl p-6 border border-slate-200 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+            <div class="flex items-center justify-between border-b border-slate-100 pb-3">
+                <h3 id="modalTitle" class="font-heading font-bold text-lg text-slate-900">Create New Note</h3>
+                <button onclick="closeNoteModal()" class="text-slate-400 hover:text-slate-700 p-1.5 rounded-lg hover:bg-slate-100 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
@@ -285,32 +289,32 @@
                 <input type="hidden" id="formNoteId">
 
                 <div class="flex flex-col gap-1.5">
-                    <label for="formTitle" class="text-xs font-semibold text-slate-300">Title <span class="text-rose-400">*</span></label>
+                    <label for="formTitle" class="text-xs font-semibold text-slate-700">Title <span class="text-rose-500">*</span></label>
                     <input
                         type="text"
                         id="formTitle"
                         placeholder="e.g., Understanding System Design and AI"
-                        class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition"
+                        class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition shadow-xs"
                         required>
-                    <span id="formTitleError" class="text-[11px] text-rose-400 hidden"></span>
+                    <span id="formTitleError" class="text-[11px] text-rose-500 hidden"></span>
                 </div>
 
                 <div class="flex flex-col gap-1.5">
-                    <label for="formContent" class="text-xs font-semibold text-slate-300">Content <span class="text-rose-400">*</span></label>
+                    <label for="formContent" class="text-xs font-semibold text-slate-700">Content <span class="text-rose-500">*</span></label>
                     <textarea
                         id="formContent"
                         rows="6"
                         placeholder="Type your note content here..."
-                        class="w-full px-3.5 py-2.5 bg-slate-950 border border-slate-700 rounded-xl text-sm text-slate-100 placeholder-slate-500 focus:outline-none focus:border-indigo-500 focus:ring-1 focus:ring-indigo-500 transition resize-none"
+                        class="w-full px-3.5 py-2.5 bg-white border border-slate-300 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-100 transition resize-none shadow-xs"
                         required></textarea>
-                    <span id="formContentError" class="text-[11px] text-rose-400 hidden"></span>
+                    <span id="formContentError" class="text-[11px] text-rose-500 hidden"></span>
                 </div>
 
-                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-800">
-                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-medium transition">
+                <div class="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeNoteModal()" class="px-4 py-2 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-semibold transition">
                         Cancel
                     </button>
-                    <button type="submit" id="saveNoteBtn" class="px-5 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold shadow-lg shadow-indigo-600/30 flex items-center gap-1.5 transition">
+                    <button type="submit" id="saveNoteBtn" class="px-5 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold shadow-md shadow-blue-600/25 flex items-center gap-1.5 transition">
                         <i data-lucide="check" class="w-4 h-4"></i>
                         <span id="saveBtnText">Save Note</span>
                     </button>
@@ -386,49 +390,49 @@
                     <div class="flex flex-col gap-2.5">
                         <div class="flex items-center justify-between gap-2">
                             <div class="flex items-center gap-1.5">
-                                <span class="text-[11px] font-mono text-slate-400">#${note.id}</span>
+                                <span class="text-[11px] font-mono font-semibold text-slate-400">#${note.id}</span>
                                 ${note.similarity_percentage !== undefined ? `
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-violet-500/20 text-violet-300 border border-violet-500/40 animate-pulse" title="Cosine Similarity Score: ${note.similarity_score}">
-                                        <i data-lucide="sparkles" class="w-3 h-3 text-violet-400"></i> ${note.similarity_percentage}% Match
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-bold bg-indigo-50 text-indigo-700 border border-indigo-200" title="Cosine Similarity Score: ${note.similarity_score}">
+                                        <i data-lucide="sparkles" class="w-3 h-3 text-indigo-600"></i> ${note.similarity_percentage}% Match
                                     </span>
                                 ` : ''}
                             </div>
                             <div class="flex items-center gap-1.5">
                                 ${hasVector ? `
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20" title="Vector Embedding Active in MySQL">
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-emerald-50 text-emerald-700 border border-emerald-200" title="Vector Embedding Active in MySQL">
                                         <i data-lucide="zap" class="w-3 h-3"></i> AI Indexed
                                     </span>
                                 ` : ''}
                                 ${hasSummary ? `
-                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-indigo-500/10 text-indigo-400 border border-indigo-500/20" title="AI Summary Cached">
+                                    <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-medium bg-blue-50 text-blue-700 border border-blue-200" title="AI Summary Cached">
                                         <i data-lucide="bot" class="w-3 h-3"></i> Summary
                                     </span>
                                 ` : ''}
                             </div>
                         </div>
 
-                        <h3 class="font-heading font-bold text-base text-slate-100 group-hover:text-indigo-300 transition line-clamp-1 cursor-pointer" onclick="openDetailModal(${note.id})">
+                        <h3 class="font-heading font-bold text-base text-slate-900 group-hover:text-blue-600 transition line-clamp-1 cursor-pointer" onclick="openDetailModal(${note.id})">
                             ${escapeHtml(note.title)}
                         </h3>
 
-                        <p class="text-xs text-slate-300 line-clamp-3 leading-relaxed">
+                        <p class="text-xs text-slate-600 line-clamp-3 leading-relaxed">
                             ${escapeHtml(note.content)}
                         </p>
                     </div>
 
-                    <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                        <span class="text-[11px] text-slate-500">${date}</span>
+                    <div class="pt-3 border-t border-slate-100 flex items-center justify-between text-xs text-slate-500">
+                        <span class="text-[11px] text-slate-400">${date}</span>
                         <div class="flex items-center gap-1">
-                            <button onclick="openDetailModalWithSummary(${note.id})" class="p-1.5 rounded-lg hover:bg-indigo-600/20 text-indigo-400 hover:text-indigo-300 transition" title="Generate/View AI Summary">
+                            <button onclick="openDetailModalWithSummary(${note.id})" class="p-1.5 rounded-lg hover:bg-blue-50 text-blue-600 hover:text-blue-700 transition" title="Generate/View AI Summary">
                                 <i data-lucide="sparkles" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="openDetailModal(${note.id})" class="p-1.5 rounded-lg hover:bg-slate-700/60 text-slate-300 hover:text-white transition" title="View Note Details">
+                            <button onclick="openDetailModal(${note.id})" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition" title="View Note Details">
                                 <i data-lucide="eye" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="openEditModal(${note.id})" class="p-1.5 rounded-lg hover:bg-slate-700/60 text-slate-300 hover:text-white transition" title="Edit Note">
+                            <button onclick="openEditModal(${note.id})" class="p-1.5 rounded-lg hover:bg-slate-100 text-slate-500 hover:text-slate-800 transition" title="Edit Note">
                                 <i data-lucide="edit-2" class="w-4 h-4"></i>
                             </button>
-                            <button onclick="deleteNote(${note.id})" class="p-1.5 rounded-lg hover:bg-rose-500/20 text-rose-400 hover:text-rose-300 transition" title="Delete Note">
+                            <button onclick="deleteNote(${note.id})" class="p-1.5 rounded-lg hover:bg-rose-50 text-rose-500 hover:text-rose-600 transition" title="Delete Note">
                                 <i data-lucide="trash-2" class="w-4 h-4"></i>
                             </button>
                         </div>
@@ -461,13 +465,13 @@
         function renderEmptyState(message = 'No notes found. Create your first note to get started!') {
             const container = document.getElementById('notesContainer');
             container.innerHTML = `
-                <div class="col-span-full py-16 flex flex-col items-center justify-center text-center glass-panel rounded-2xl p-8">
-                    <div class="w-16 h-16 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center text-indigo-400 mb-4">
+                <div class="col-span-full py-16 flex flex-col items-center justify-center text-center bg-white border border-slate-200 rounded-2xl p-8 shadow-xs">
+                    <div class="w-16 h-16 rounded-2xl bg-blue-50 border border-blue-200 flex items-center justify-center text-blue-600 mb-4">
                         <i data-lucide="folder-open" class="w-8 h-8"></i>
                     </div>
-                    <h3 class="font-heading font-bold text-lg text-white mb-1">No Notes Found</h3>
-                    <p class="text-xs text-slate-400 max-w-sm mb-6">${message}</p>
-                    <button onclick="openCreateModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-2 shadow-lg shadow-indigo-600/30">
+                    <h3 class="font-heading font-bold text-lg text-slate-900 mb-1">No Notes Found</h3>
+                    <p class="text-xs text-slate-500 max-w-sm mb-6">${message}</p>
+                    <button onclick="openCreateModal()" class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-2 shadow-md shadow-blue-600/25 transition">
                         <i data-lucide="plus" class="w-4 h-4"></i> Create Note
                     </button>
                 </div>
@@ -491,7 +495,7 @@
             info.innerText = `Showing ${from}-${to} of ${p.total} notes`;
 
             let btns = `
-                <button onclick="loadNotes(${p.current_page - 1})" ${p.current_page <= 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-800"'} class="px-2.5 py-1.5 rounded-lg border border-slate-700 text-slate-300 transition">
+                <button onclick="loadNotes(${p.current_page - 1})" ${p.current_page <= 1 ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-100"'} class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 transition">
                     <i data-lucide="chevron-left" class="w-3.5 h-3.5"></i>
                 </button>
             `;
@@ -499,17 +503,17 @@
             for (let i = 1; i <= p.total_pages; i++) {
                 if (i === 1 || i === p.total_pages || (i >= p.current_page - 1 && i <= p.current_page + 1)) {
                     btns += `
-                        <button onclick="loadNotes(${i})" class="px-3 py-1.5 rounded-lg border ${i === p.current_page ? 'bg-indigo-600 border-indigo-500 text-white font-bold' : 'border-slate-700 hover:bg-slate-800 text-slate-300'} transition">
+                        <button onclick="loadNotes(${i})" class="px-3 py-1.5 rounded-lg border ${i === p.current_page ? 'bg-blue-600 border-blue-600 text-white font-bold shadow-xs' : 'border-slate-200 hover:bg-slate-100 text-slate-700'} transition text-xs">
                             ${i}
                         </button>
                     `;
                 } else if (i === p.current_page - 2 || i === p.current_page + 2) {
-                    btns += `<span class="px-1 text-slate-600">...</span>`;
+                    btns += `<span class="px-1 text-slate-400">...</span>`;
                 }
             }
 
             btns += `
-                <button onclick="loadNotes(${p.current_page + 1})" ${!p.has_more_pages ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-800"'} class="px-2.5 py-1.5 rounded-lg border border-slate-700 text-slate-300 transition">
+                <button onclick="loadNotes(${p.current_page + 1})" ${!p.has_more_pages ? 'disabled class="opacity-40 cursor-not-allowed"' : 'class="hover:bg-slate-100"'} class="px-2.5 py-1.5 rounded-lg border border-slate-200 text-slate-600 transition">
                     <i data-lucide="chevron-right" class="w-3.5 h-3.5"></i>
                 </button>
             `;
@@ -618,16 +622,16 @@
 
             if (note.summary) {
                 activeSummaryText = note.summary;
-                summaryContainer.innerHTML = `<p class="text-slate-200 leading-relaxed">${escapeHtml(note.summary)}</p>`;
+                summaryContainer.innerHTML = `<p class="text-slate-800 leading-relaxed">${escapeHtml(note.summary)}</p>`;
                 summaryPill.classList.remove('hidden');
                 summaryPill.innerText = 'Cached';
-                summaryPill.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
+                summaryPill.className = 'px-2 py-0.5 rounded text-[10px] font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200';
                 copyBtn.classList.remove('hidden');
             } else {
                 activeSummaryText = '';
                 summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-3 w-full py-1">
-                    <span class="text-slate-500 italic">No summary generated yet.</span>
-                    <button onclick="triggerSummary(${id})" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
+                    <span class="text-slate-400 italic">No summary generated yet.</span>
+                    <button onclick="triggerSummary(${id})" class="px-3 py-1.5 rounded-lg bg-blue-600 hover:bg-blue-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow-xs transition">
                         <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate AI Summary
                     </button>
                 </div>`;
@@ -674,7 +678,7 @@
             const summaryPill = document.getElementById('summaryStatusPill');
             const copyBtn = document.getElementById('copySummaryBtn');
 
-            summaryContainer.innerHTML = `<div class="flex items-center gap-2 py-2 text-indigo-300 font-medium">
+            summaryContainer.innerHTML = `<div class="flex items-center gap-2 py-2 text-blue-600 font-medium text-xs">
                 <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
                 <span>Analyzing and generating executive AI summary for note #${id}...</span>
             </div>`;
@@ -694,12 +698,12 @@
                 if (json.success) {
                     const sum = json.data.summary;
                     activeSummaryText = sum;
-                    summaryContainer.innerHTML = `<p class="text-slate-200 leading-relaxed">${escapeHtml(sum)}</p>`;
+                    summaryContainer.innerHTML = `<p class="text-slate-800 leading-relaxed">${escapeHtml(sum)}</p>`;
                     summaryPill.classList.remove('hidden');
                     summaryPill.innerText = json.data.cached ? 'From Cache' : 'Fresh AI';
                     summaryPill.className = json.data.cached ?
-                        'px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700' :
-                        'px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
+                        'px-2 py-0.5 rounded text-[10px] font-semibold bg-white text-slate-600 border border-slate-200 shadow-xs' :
+                        'px-2 py-0.5 rounded text-[10px] font-semibold bg-blue-100 text-blue-800 border border-blue-200';
                     copyBtn.classList.remove('hidden');
 
                     // Update note in local state and DOM card badges
@@ -708,16 +712,16 @@
 
                     showToast(json.message, 'success');
                 } else {
-                    summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-2 py-1 text-rose-400">
+                    summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-2 py-1 text-rose-600 text-xs">
                         <span>Failed: ${escapeHtml(json.message)}</span>
-                        <button onclick="triggerSummary(${id}, true)" class="px-2 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">Retry</button>
+                        <button onclick="triggerSummary(${id}, true)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium">Retry</button>
                     </div>`;
                     showToast(json.message || 'Failed to generate summary', 'error');
                 }
             } catch (err) {
-                summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-2 py-1 text-rose-400">
+                summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-2 py-1 text-rose-600 text-xs">
                     <span>Error connecting to AI service.</span>
-                    <button onclick="triggerSummary(${id}, true)" class="px-2 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">Retry</button>
+                    <button onclick="triggerSummary(${id}, true)" class="px-2.5 py-1 text-xs bg-slate-100 hover:bg-slate-200 text-slate-700 rounded font-medium">Retry</button>
                 </div>`;
                 showToast('AI Service Error', 'error');
             }
@@ -851,14 +855,14 @@
             const isSuccess = type === 'success';
             const isError = type === 'error';
 
-            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-2xl border text-xs font-medium transition-all duration-200 transform translate-y-2 opacity-0 ${
-                isSuccess ? 'bg-emerald-950/90 border-emerald-500/40 text-emerald-200' :
-                isError ? 'bg-rose-950/90 border-rose-500/40 text-rose-200' :
-                'bg-slate-900/90 border-slate-700 text-slate-200'
+            toast.className = `pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-xl shadow-xl border text-xs font-semibold transition-all duration-200 transform translate-y-2 opacity-0 ${
+                isSuccess ? 'bg-white border-emerald-300 text-emerald-800' :
+                isError ? 'bg-white border-rose-300 text-rose-800' :
+                'bg-white border-slate-300 text-slate-800'
             }`;
 
             toast.innerHTML = `
-                <i data-lucide="${isSuccess ? 'check-circle' : isError ? 'alert-circle' : 'info'}" class="w-4 h-4 shrink-0"></i>
+                <i data-lucide="${isSuccess ? 'check-circle' : isError ? 'alert-circle' : 'info'}" class="w-4 h-4 shrink-0 ${isSuccess ? 'text-emerald-600' : isError ? 'text-rose-600' : 'text-blue-600'}"></i>
                 <span class="flex-1">${escapeHtml(message)}</span>
             `;
 

@@ -413,3 +413,10 @@ Status:   100% PASSING
 
 ## 👨‍💻 Author & Submission Note
 Built as a technical assessment demonstrating modern Laravel backend architecture, REST API standards, secure database design, practical AI integrations, and automated testing.
+
+
+
+
+
+App-
+https://drive.google.com/drive/folders/1EehCD355zwMuXMkCzgAbSVKZzfhscC9x?usp=sharing

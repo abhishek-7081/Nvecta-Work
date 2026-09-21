@@ -34,15 +34,10 @@ class AIService implements AIServiceInterface
             // Environment outside of Laravel Application container (e.g. Unit tests)
         }
 
-        // Auto-select driver based on provider preference and available credentials
-        if ($provider === 'gemini' && !empty($geminiKey)) {
-            $this->driver = new GeminiService();
-        } elseif ($provider === 'openai' && !empty($openaiKey)) {
+        if ($provider === 'openai' && !empty($openaiKey)) {
             $this->driver = new OpenAIService();
-        } elseif (!empty($geminiKey)) {
+        } elseif ($provider === 'gemini' && !empty($geminiKey)) {
             $this->driver = new GeminiService();
-        } elseif (!empty($openaiKey)) {
-            $this->driver = new OpenAIService();
         } else {
             // Graceful fallback to LocalAIService
             $this->driver = new LocalAIService();
@@ -79,7 +74,7 @@ class AIService implements AIServiceInterface
         try {
             return $this->driver->generateEmbedding($text);
         } catch (Throwable $e) {
-            Log::warning('Primary AI driver (' . get_class($this->driver) . ') failed for embedding, using LocalAIService fallback: ' . $e->getMessage());
+            Log::warning('Primary AI driver failed for embedding, using LocalAIService fallback: ' . $e->getMessage());
             $fallback = new LocalAIService();
             return $fallback->generateEmbedding($text);
         }
@@ -93,7 +88,7 @@ class AIService implements AIServiceInterface
         try {
             return $this->driver->generateSummary($content);
         } catch (Throwable $e) {
-            Log::warning('Primary AI driver (' . get_class($this->driver) . ') failed for summary, using LocalAIService fallback: ' . $e->getMessage());
+            Log::warning('Primary AI driver failed for summary, using LocalAIService fallback: ' . $e->getMessage());
             $fallback = new LocalAIService();
             return $fallback->generateSummary($content);
         }
