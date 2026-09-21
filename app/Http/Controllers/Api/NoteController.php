@@ -8,6 +8,7 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
+use App\Services\EmbeddingService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -16,6 +17,10 @@ use Symfony\Component\HttpFoundation\Response;
 class NoteController extends Controller
 {
     use ApiResponse;
+
+    public function __construct(
+        protected EmbeddingService $embeddingService
+    ) {}
 
     /**
      * Display a paginated listing of notes.
@@ -63,8 +68,11 @@ class NoteController extends Controller
             'content' => $validated['content'],
         ]);
 
+        // Automatically generate vector embedding for semantic search
+        $this->embeddingService->syncNoteEmbedding($note);
+
         return $this->successResponse(
-            data: new NoteResource($note),
+            data: new NoteResource($note->fresh()),
             message: 'Note created successfully',
             statusCode: Response::HTTP_CREATED
         );
@@ -121,6 +129,11 @@ class NoteController extends Controller
         }
 
         $note->update($validated);
+
+        // If content was updated, regenerate the embedding
+        if (isset($validated['content'])) {
+            $this->embeddingService->syncNoteEmbedding($note);
+        }
 
         return $this->successResponse(
             data: new NoteResource($note->fresh()),
