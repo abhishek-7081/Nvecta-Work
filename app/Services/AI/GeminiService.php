@@ -33,7 +33,8 @@ class GeminiService implements AIServiceInterface
 
         $url = "{$this->baseUrl}/models/{$this->embeddingModel}:embedContent?key={$this->apiKey}";
 
-        $response = Http::timeout(15)
+        $response = Http::withoutVerifying()
+            ->timeout(15)
             ->retry(2, 500)
             ->post($url, [
                 'model' => "models/{$this->embeddingModel}",
@@ -74,7 +75,8 @@ class GeminiService implements AIServiceInterface
 
         $prompt = "You are an expert executive assistant. Summarize the following note concisely in 2-3 clear, informative sentences highlighting the main points:\n\n" . $content;
 
-        $response = Http::timeout(20)
+        $response = Http::withoutVerifying()
+            ->timeout(20)
             ->retry(2, 500)
             ->post($url, [
                 'contents' => [
@@ -86,7 +88,7 @@ class GeminiService implements AIServiceInterface
                 ],
                 'generationConfig' => [
                     'temperature' => 0.3,
-                    'maxOutputTokens' => 200,
+                    'maxOutputTokens' => 300,
                 ],
             ]);
 

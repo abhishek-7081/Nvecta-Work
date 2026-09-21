@@ -87,6 +87,23 @@
                 background-position: 200% 0;
             }
         }
+
+        /* Custom sleek scrollbar for modal & summary containers */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(15, 23, 42, 0.6);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(99, 102, 241, 0.35);
+            border-radius: 8px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(99, 102, 241, 0.65);
+        }
     </style>
 </head>
 
@@ -190,58 +207,63 @@
     </main>
 
     <!-- Note Detail & AI Summary Modal -->
-    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
-        <div class="glass-panel bg-slate-900/95 max-w-2xl w-full rounded-2xl p-6 border border-slate-700 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
-            <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-4">
+    <div id="detailModal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div class="glass-panel bg-slate-900/95 max-w-2xl w-full max-h-[90vh] rounded-2xl p-6 border border-slate-700 shadow-2xl flex flex-col gap-4 animate-in fade-in zoom-in-95 duration-150">
+            <!-- Modal Header (Fixed) -->
+            <div class="flex items-start justify-between gap-4 border-b border-slate-800 pb-3.5 shrink-0">
                 <div>
                     <span id="detailBadge" class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-semibold bg-indigo-500/10 text-indigo-400 border border-indigo-500/20 mb-1.5">
                         <i data-lucide="cpu" class="w-3 h-3"></i> Note Details
                     </span>
-                    <h2 id="detailTitle" class="font-heading font-bold text-xl text-white"></h2>
+                    <h2 id="detailTitle" class="font-heading font-bold text-xl text-white break-words"></h2>
                 </div>
-                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800">
+                <button onclick="closeDetailModal()" class="text-slate-400 hover:text-white p-1 rounded-lg hover:bg-slate-800 transition">
                     <i data-lucide="x" class="w-5 h-5"></i>
                 </button>
             </div>
 
-            <!-- Full Note Content -->
-            <div class="flex flex-col gap-1.5">
-                <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Note Content</span>
-                <p id="detailContent" class="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 max-h-60 overflow-y-auto"></p>
-            </div>
+            <!-- Modal Body (Scrollable) -->
+            <div class="flex-1 overflow-y-auto pr-1 flex flex-col gap-4 custom-scrollbar">
+                <!-- Full Note Content -->
+                <div class="flex flex-col gap-1.5">
+                    <span class="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">Note Content</span>
+                    <p id="detailContent" class="text-sm text-slate-200 leading-relaxed whitespace-pre-wrap bg-slate-950/60 p-4 rounded-xl border border-slate-800/80 max-h-48 overflow-y-auto break-words select-text"></p>
+                </div>
 
-            <!-- AI Summary Section -->
-            <div class="flex flex-col gap-2 bg-gradient-to-br from-indigo-950/40 to-slate-950/70 p-4 rounded-xl border border-indigo-500/20">
-                <div class="flex items-center justify-between">
-                    <div class="flex items-center gap-2">
-                        <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>
-                        <span class="text-xs font-semibold text-indigo-200">AI-Generated Executive Summary</span>
-                        <span id="summaryStatusPill" class="hidden px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300"></span>
+                <!-- AI Summary Section -->
+                <div class="flex flex-col gap-2.5 bg-gradient-to-br from-indigo-950/40 to-slate-950/70 p-4 rounded-xl border border-indigo-500/20">
+                    <div class="flex items-center justify-between gap-2 pb-2 border-b border-indigo-500/10">
+                        <div class="flex items-center gap-2 flex-wrap">
+                            <i data-lucide="bot" class="w-4 h-4 text-indigo-400"></i>
+                            <span class="text-xs font-semibold text-indigo-200">AI Executive Summary</span>
+                            <span id="summaryStatusPill" class="hidden px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300"></span>
+                        </div>
+                        <div class="flex items-center gap-2.5 shrink-0">
+                            <button id="copySummaryBtn" onclick="copySummaryText()" class="hidden text-xs text-slate-300 hover:text-white px-2 py-1 rounded bg-slate-800 hover:bg-slate-700 flex items-center gap-1 font-medium transition" title="Copy Summary">
+                                <i data-lucide="copy" class="w-3.5 h-3.5"></i>
+                                <span>Copy</span>
+                            </button>
+                            <button id="regenerateSummaryBtn" onclick="triggerSummary(currentDetailId, true)" class="text-xs text-indigo-300 hover:text-white px-2 py-1 rounded bg-indigo-900/40 hover:bg-indigo-900/70 border border-indigo-500/30 flex items-center gap-1 font-medium transition">
+                                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                                <span>Re-summarize</span>
+                            </button>
+                        </div>
                     </div>
-                    <div class="flex items-center gap-3">
-                        <button id="copySummaryBtn" onclick="copySummaryText()" class="hidden text-xs text-slate-400 hover:text-white flex items-center gap-1 font-medium transition" title="Copy Summary">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i>
-                            <span>Copy</span>
-                        </button>
-                        <button id="regenerateSummaryBtn" onclick="triggerSummary(currentDetailId, true)" class="text-xs text-indigo-400 hover:text-indigo-300 flex items-center gap-1 font-medium transition">
-                            <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                            <span>Re-summarize</span>
-                        </button>
+                    <!-- Dedicated scrollable container for long AI summaries -->
+                    <div id="detailSummaryContainer" class="text-xs text-slate-200 leading-relaxed min-h-[44px] max-h-56 overflow-y-auto pr-1 whitespace-pre-wrap select-text">
+                        <span class="text-slate-500 italic">No summary generated yet. Click Generate Summary below.</span>
                     </div>
                 </div>
-                <div id="detailSummaryContainer" class="text-xs text-slate-300 leading-normal min-h-[38px] flex items-center">
-                    <span class="text-slate-500 italic">No summary generated yet. Click Generate Summary below.</span>
-                </div>
             </div>
 
-            <!-- Footer Action Buttons -->
-            <div class="flex items-center justify-between pt-2 border-t border-slate-800 text-xs">
+            <!-- Footer Action Buttons (Fixed) -->
+            <div class="flex items-center justify-between pt-3 border-t border-slate-800 text-xs shrink-0">
                 <span id="detailDates" class="text-slate-500"></span>
                 <div class="flex items-center gap-2">
-                    <button onclick="editFromDetail()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium flex items-center gap-1.5">
+                    <button onclick="editFromDetail()" class="px-3.5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-white font-medium flex items-center gap-1.5 transition">
                         <i data-lucide="edit-3" class="w-3.5 h-3.5"></i> Edit
                     </button>
-                    <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold">
+                    <button onclick="closeDetailModal()" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-500 text-white font-semibold transition">
                         Done
                     </button>
                 </div>
@@ -397,7 +419,7 @@
                     <div class="pt-3 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
                         <span class="text-[11px] text-slate-500">${date}</span>
                         <div class="flex items-center gap-1">
-                            <button onclick="triggerSummary(${note.id})" class="p-1.5 rounded-lg hover:bg-indigo-600/20 text-indigo-400 hover:text-indigo-300 transition" title="Generate/View AI Summary">
+                            <button onclick="openDetailModalWithSummary(${note.id})" class="p-1.5 rounded-lg hover:bg-indigo-600/20 text-indigo-400 hover:text-indigo-300 transition" title="Generate/View AI Summary">
                                 <i data-lucide="sparkles" class="w-4 h-4"></i>
                             </button>
                             <button onclick="openDetailModal(${note.id})" class="p-1.5 rounded-lg hover:bg-slate-700/60 text-slate-300 hover:text-white transition" title="View Note Details">
@@ -566,8 +588,25 @@
         // Note Details & AI Summary Modal
         async function openDetailModal(id) {
             currentDetailId = id;
-            const note = allNotes.find(n => n.id === id);
-            if (!note) return;
+            let note = allNotes.find(n => n.id === id);
+
+            // If not found in current page collection, fetch from API
+            if (!note) {
+                try {
+                    const res = await fetch(`/api/notes/${id}`, { headers: { 'Accept': 'application/json' } });
+                    const json = await res.json();
+                    if (json.success) {
+                        note = json.data;
+                    }
+                } catch (e) {
+                    console.error(e);
+                }
+            }
+
+            if (!note) {
+                showToast('Note not found', 'error');
+                return;
+            }
 
             document.getElementById('detailTitle').innerText = note.title;
             document.getElementById('detailContent').innerText = note.content;
@@ -575,26 +614,37 @@
 
             const summaryContainer = document.getElementById('detailSummaryContainer');
             const summaryPill = document.getElementById('summaryStatusPill');
-
             const copyBtn = document.getElementById('copySummaryBtn');
 
             if (note.summary) {
                 activeSummaryText = note.summary;
-                summaryContainer.innerHTML = `<p class="text-slate-200">${escapeHtml(note.summary)}</p>`;
+                summaryContainer.innerHTML = `<p class="text-slate-200 leading-relaxed">${escapeHtml(note.summary)}</p>`;
                 summaryPill.classList.remove('hidden');
                 summaryPill.innerText = 'Cached';
                 summaryPill.className = 'px-2 py-0.5 rounded text-[10px] font-medium bg-emerald-500/10 text-emerald-400 border border-emerald-500/20';
                 copyBtn.classList.remove('hidden');
             } else {
                 activeSummaryText = '';
-                summaryContainer.innerHTML = `<button onclick="triggerSummary(${id})" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white font-medium flex items-center gap-1.5 transition"><i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate AI Summary</button>`;
+                summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-3 w-full py-1">
+                    <span class="text-slate-500 italic">No summary generated yet.</span>
+                    <button onclick="triggerSummary(${id})" class="px-3 py-1.5 rounded-lg bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-semibold flex items-center gap-1.5 shadow transition">
+                        <i data-lucide="sparkles" class="w-3.5 h-3.5"></i> Generate AI Summary
+                    </button>
+                </div>`;
                 summaryPill.classList.add('hidden');
                 copyBtn.classList.add('hidden');
-                lucide.createIcons();
             }
 
             document.getElementById('detailModal').classList.remove('hidden');
             lucide.createIcons();
+            return note;
+        }
+
+        async function openDetailModalWithSummary(id) {
+            const note = await openDetailModal(id);
+            if (note && !note.summary) {
+                triggerSummary(id);
+            }
         }
 
         function closeDetailModal() {
@@ -614,11 +664,20 @@
 
         // Trigger AI Summary API
         async function triggerSummary(id, force = false) {
+            currentDetailId = id;
+            // Ensure modal is open
+            if (document.getElementById('detailModal').classList.contains('hidden')) {
+                await openDetailModal(id);
+            }
+
             const summaryContainer = document.getElementById('detailSummaryContainer');
             const summaryPill = document.getElementById('summaryStatusPill');
             const copyBtn = document.getElementById('copySummaryBtn');
 
-            summaryContainer.innerHTML = `<span class="flex items-center gap-2 text-indigo-300"><i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> AI is summarizing note #${id}...</span>`;
+            summaryContainer.innerHTML = `<div class="flex items-center gap-2 py-2 text-indigo-300 font-medium">
+                <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i>
+                <span>Analyzing and generating executive AI summary for note #${id}...</span>
+            </div>`;
             copyBtn.classList.add('hidden');
             lucide.createIcons();
 
@@ -635,25 +694,31 @@
                 if (json.success) {
                     const sum = json.data.summary;
                     activeSummaryText = sum;
-                    summaryContainer.innerHTML = `<p class="text-slate-200">${escapeHtml(sum)}</p>`;
+                    summaryContainer.innerHTML = `<p class="text-slate-200 leading-relaxed">${escapeHtml(sum)}</p>`;
                     summaryPill.classList.remove('hidden');
                     summaryPill.innerText = json.data.cached ? 'From Cache' : 'Fresh AI';
                     summaryPill.className = json.data.cached ?
-                        'px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300' :
+                        'px-2 py-0.5 rounded text-[10px] font-medium bg-slate-800 text-slate-300 border border-slate-700' :
                         'px-2 py-0.5 rounded text-[10px] font-medium bg-indigo-500/20 text-indigo-300 border border-indigo-500/30';
                     copyBtn.classList.remove('hidden');
 
-                    // Update note in local state
+                    // Update note in local state and DOM card badges
                     const local = allNotes.find(n => n.id === id);
                     if (local) local.summary = sum;
 
                     showToast(json.message, 'success');
                 } else {
-                    summaryContainer.innerHTML = `<span class="text-rose-400">Failed: ${json.message}</span>`;
-                    showToast(json.message, 'error');
+                    summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-2 py-1 text-rose-400">
+                        <span>Failed: ${escapeHtml(json.message)}</span>
+                        <button onclick="triggerSummary(${id}, true)" class="px-2 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">Retry</button>
+                    </div>`;
+                    showToast(json.message || 'Failed to generate summary', 'error');
                 }
             } catch (err) {
-                summaryContainer.innerHTML = `<span class="text-rose-400">Error connecting to AI service.</span>`;
+                summaryContainer.innerHTML = `<div class="flex items-center justify-between gap-2 py-1 text-rose-400">
+                    <span>Error connecting to AI service.</span>
+                    <button onclick="triggerSummary(${id}, true)" class="px-2 py-1 text-xs bg-slate-800 hover:bg-slate-700 text-slate-200 rounded">Retry</button>
+                </div>`;
                 showToast('AI Service Error', 'error');
             }
             lucide.createIcons();
