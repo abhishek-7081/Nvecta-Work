@@ -8,18 +8,21 @@ use App\Http\Requests\StoreNoteRequest;
 use App\Http\Requests\UpdateNoteRequest;
 use App\Http\Resources\NoteResource;
 use App\Models\Note;
+use App\Services\AIService;
 use App\Services\EmbeddingService;
 use App\Traits\ApiResponse;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Throwable;
 
 class NoteController extends Controller
 {
     use ApiResponse;
 
     public function __construct(
-        protected EmbeddingService $embeddingService
+        protected EmbeddingService $embeddingService,
+        protected AIService $aiService
     ) {}
 
     /**
@@ -166,5 +169,63 @@ class NoteController extends Controller
             message: 'Note deleted successfully',
             statusCode: Response::HTTP_OK
         );
+    }
+
+    /**
+     * Generate or retrieve an AI-based summary for the selected note.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return JsonResponse
+     */
+    public function summary(Request $request, int $id): JsonResponse
+    {
+        $note = Note::find($id);
+
+        if (!$note) {
+            return $this->errorResponse(
+                message: 'Note not found',
+                statusCode: Response::HTTP_NOT_FOUND
+            );
+        }
+
+        $forceRegenerate = $request->boolean('force', false);
+
+        // If summary is already cached and force is false, return cached summary
+        if (!empty($note->summary) && !$forceRegenerate) {
+            return $this->successResponse(
+                data: [
+                    'note_id' => $note->id,
+                    'title' => $note->title,
+                    'summary' => $note->summary,
+                    'cached' => true,
+                ],
+                message: 'AI summary retrieved successfully (from cache)',
+                statusCode: Response::HTTP_OK
+            );
+        }
+
+        try {
+            $summary = $this->aiService->generateSummary($note->content);
+
+            $note->summary = $summary;
+            $note->saveQuietly();
+
+            return $this->successResponse(
+                data: [
+                    'note_id' => $note->id,
+                    'title' => $note->title,
+                    'summary' => $summary,
+                    'cached' => false,
+                ],
+                message: 'AI summary generated successfully',
+                statusCode: Response::HTTP_OK
+            );
+        } catch (Throwable $e) {
+            return $this->errorResponse(
+                message: 'Failed to generate AI summary at this time. Please try again later.',
+                statusCode: Response::HTTP_SERVICE_UNAVAILABLE
+            );
+        }
     }
 }

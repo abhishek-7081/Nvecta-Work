@@ -19,4 +19,7 @@ Route::middleware(['throttle:60,1'])->group(function () {
     Route::get('/notes/{id}', [NoteController::class, 'show'])->whereNumber('id');
     Route::put('/notes/{id}', [NoteController::class, 'update'])->whereNumber('id');
     Route::delete('/notes/{id}', [NoteController::class, 'destroy'])->whereNumber('id');
+
+    // AI Summary Endpoint
+    Route::post('/notes/{id}/summary', [NoteController::class, 'summary'])->whereNumber('id');
 });
